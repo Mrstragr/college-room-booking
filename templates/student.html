@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard | CampusRooms{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+  <div><p class="eyebrow mb-1">STUDENT PORTAL</p><h2 class="fw-bold mb-1">Find your space</h2><p class="text-muted mb-0">Browse rooms and reserve a time slot.</p></div>
+  <span class="pill">{{ rooms|length }} active rooms</span>
+</div>
+<h5 class="section-title mb-3">Available rooms</h5>
+<div class="row g-3 mb-5">
+{% for room in rooms %}
+  <div class="col-md-6 col-lg-4">
+    <div class="room-card h-100">
+      <div class="d-flex justify-content-between"><span class="room-type">{{ room[2] }}</span><span class="text-muted small">Capacity {{ room[3] }}</span></div>
+      <h5 class="fw-bold mt-3">{{ room[1] }}</h5>
+      <p class="text-muted small mb-2">{{ room[4] or 'Campus' }}</p>
+      <p class="small">{{ room[5] or 'Available for academic use.' }}</p>
+      <form method="post" action="{{ url_for('book') }}" class="booking-form mt-3">
+        <input type="hidden" name="room_id" value="{{ room[0] }}">
+        <label class="form-label small">Start</label><input class="form-control form-control-sm mb-2" type="datetime-local" name="start_time" required>
+        <label class="form-label small">End</label><input class="form-control form-control-sm mb-2" type="datetime-local" name="end_time" required>
+        <input class="form-control form-control-sm mb-3" name="purpose" placeholder="Purpose (e.g. project work)" required>
+        <button class="btn btn-primary btn-sm w-100">Book this room</button>
+      </form>
+    </div>
+  </div>
+{% else %}
+  <div class="col-12"><div class="empty-state">No active rooms yet. Please check back later.</div></div>
+{% endfor %}
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3"><h5 class="section-title mb-0">My bookings</h5></div>
+<div class="table-responsive panel">
+<table class="table align-middle mb-0">
+<thead><tr><th>Room</th><th>Start</th><th>End</th><th>Purpose</th><th>Status</th><th></th></tr></thead>
+<tbody>
+{% for b in bookings %}
+<tr>
+<td class="fw-semibold">{{ b[1] }}</td><td>{{ b[2].strftime('%d %b %Y, %H:%M') }}</td><td>{{ b[3].strftime('%H:%M') }}</td><td>{{ b[4] }}</td>
+<td><span class="status status-{{ b[5]|lower }}">{{ b[5] }}</span></td>
+<td>{% if b[5] == 'CONFIRMED' %}<form method="post" action="{{ url_for('cancel_booking', booking_id=b[0]) }}"><button class="btn btn-sm btn-outline-danger">Cancel</button></form>{% endif %}</td>
+</tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted py-4">You haven't made any bookings yet.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
