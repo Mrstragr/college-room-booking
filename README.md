@@ -51,7 +51,7 @@ A web-based application for managing college laboratories and classroom reservat
 ### 1. Clone the repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/Mrstragr/college-room-booking.git
 cd college-room-booking
 ```
 

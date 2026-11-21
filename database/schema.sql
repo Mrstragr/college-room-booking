@@ -79,6 +79,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS booking_history_immutable ON booking_history;
+
 CREATE TRIGGER booking_history_immutable
 BEFORE UPDATE OR DELETE ON booking_history
 FOR EACH ROW
