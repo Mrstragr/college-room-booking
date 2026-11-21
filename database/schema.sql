@@ -71,3 +71,15 @@ ON bookings(user_id);
 
 CREATE INDEX idx_maintenance_room
 ON maintenance(room_id, start_time, end_time);
+
+CREATE OR REPLACE FUNCTION prevent_history_modification()
+RETURNS TRIGGER AS $$
+BEGIN
+    RAISE EXCEPTION 'Booking history is append-only';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER booking_history_immutable
+BEFORE UPDATE OR DELETE ON booking_history
+FOR EACH ROW
+EXECUTE FUNCTION prevent_history_modification();
